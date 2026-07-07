@@ -1,0 +1,253 @@
+@import 'tailwindcss';
+
+/*
+  Fathom palette — instrumentation, not aquarium. Every value earns its place.
+
+  abyss    #0B1A24  canvas. Desaturated blue-green black — deep water where no
+                    light returns. Deliberately not #000 (avoids the near-black +
+                    neon cliche) and not cream (avoids the cream+serif cliche).
+  hull     #15272F  panel / instrument-housing surface, one step off the abyss.
+  hull-2   #1D333D  raised control surfaces (inputs, buttons).
+  steel    #2C4650  etched rules, borders, gauge graduations. Cold metal.
+  fog      #8FA6AC  secondary text — light attenuated through water.
+  sounding #E9E3D3  primary text. Warm bone/parchment of a ship's logbook, used
+                    as INK on dark, never as a background.
+  phosphor #57C4A3  the single functional accent for LIVE / active state. Green
+                    because echo-sounder CRTs read in green phosphor.
+  brass    #D6A24A  the sounding weight + the "hit bottom / sufficient" landing.
+                    Warm brass counterpoint to the cold teal; used sparingly.
+  rust     #BF5B4A  oxidized red, error terminal state only. Muted, not alarm-red.
+*/
+@theme {
+  --color-abyss: #0b1a24;
+  --color-hull: #15272f;
+  --color-hull-2: #1d333d;
+  --color-steel: #2c4650;
+  --color-fog: #8fa6ac;
+  --color-sounding: #e9e3d3;
+  --color-phosphor: #57c4a3;
+  --color-brass: #d6a24a;
+  --color-rust: #bf5b4a;
+
+  --font-display: 'Space Grotesk Variable', system-ui, sans-serif;
+  --font-body: 'Newsreader Variable', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--color-abyss);
+    color: var(--color-sounding);
+    font-family: var(--font-body);
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Faint static depth gradient on the canvas. No animation. */
+    background-image: radial-gradient(
+      120% 80% at 50% -10%,
+      #12303b 0%,
+      var(--color-abyss) 55%
+    );
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-phosphor);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /*
+    Interactive affordance: pointer cursor on everything clickable (native
+    <button> defaults to the arrow cursor, which reads as non-interactive).
+    Text inputs keep their text caret intentionally.
+  */
+  button:not(:disabled),
+  [role='button'],
+  a[href],
+  summary,
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-phosphor) 35%, transparent);
+    color: var(--color-sounding);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-steel) transparent;
+  }
+}
+
+@layer utilities {
+  /* Uppercase mono micro-label used for instrument readouts. */
+  .readout {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-fog);
+  }
+}
+
+/*
+  Motion appears ONLY on real state changes and each keyframe runs exactly once
+  (iteration-count 1) — no ambient loops. All of it is gated behind
+  prefers-reduced-motion, so a reduced-motion user gets instant state changes.
+*/
+@keyframes fathom-land {
+  0% {
+    transform: translateY(-6px) scale(0.9);
+    opacity: 0.4;
+  }
+  55% {
+    transform: translateY(2px) scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fathom-rise {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fathom-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* One pulse ring on a node going LIVE. Expands outward and fades, once. */
+@keyframes fathom-pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* A completed node's indicator morphing into a checkmark — quick scale-in. */
+@keyframes fathom-check {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Verdict badge pop on mount. */
+@keyframes fathom-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-land {
+    animation: fathom-land 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-rise {
+    animation: fathom-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-fade {
+    animation: fathom-fade 400ms ease-out both;
+  }
+  /* Staggered variant: `backwards` fill hides the card until its delay elapses,
+     then hands opacity back to the element's own class (so dimmed older cards
+     stay dimmed). Delay is set inline per card index. */
+  .animate-rise-in {
+    animation: fathom-rise 460ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .animate-pulse-ring {
+    animation: fathom-pulse-ring 900ms ease-out 1 both;
+  }
+  .animate-check {
+    animation: fathom-check 320ms cubic-bezier(0.34, 1.56, 0.64, 1) 1 both;
+  }
+  .animate-pop {
+    animation: fathom-pop 340ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms 1 both;
+  }
+
+  /* Hover affordance for every button — a subtle tactile scale, ~150ms ease-out.
+     Runs only on the interaction; no idle cost. Reduced-motion users are opted
+     out via this media query. Focus-visible outlines are untouched. */
+  button:not(:disabled) {
+    transition:
+      transform 150ms ease-out,
+      filter 150ms ease-out,
+      border-color 150ms ease-out,
+      background-color 150ms ease-out,
+      color 150ms ease-out,
+      box-shadow 150ms ease-out;
+  }
+  button:not(:disabled):hover {
+    transform: scale(1.02);
+  }
+  button:not(:disabled):active {
+    transform: scale(0.985);
+  }
+}
