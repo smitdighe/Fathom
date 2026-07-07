@@ -13,6 +13,8 @@
 
 </div>
 
+> 🌐 **Live Demo:** https://fathom-dev.vercel.app
+
 <div align="center">
 
 **Fathom** is an autonomous research agent built on LangGraph. Give it one topic — it plans sub-questions, searches the web, extracts and reads sources, reflects on whether coverage is sufficient, loops back to research more if it isn't, cross-references claims for contradictions, and writes a cited report. No human in the loop after you hit submit.
